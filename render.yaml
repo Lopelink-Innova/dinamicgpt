@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: mini-chatgpt
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python app.py"
+    envVars:
+      - key: OPENAI_API_KEY
+        value: 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
