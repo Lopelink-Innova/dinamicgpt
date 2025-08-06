@@ -2,31 +2,49 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mini ChatGPT Gemini</title>
+  <title>Vega – Tu IA Personal</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>Mini ChatGPT con Gemini</h1>
-  <textarea id="userInput" placeholder="Escribe tu mensaje..."></textarea><br>
-  <button onclick="sendMessage()">Enviar</button>
-  <div id="responseBox" style="margin-top: 1rem;"></div>
+  <h2>IA Vega</h2>
+  <div id="chat-box"></div>
+  <input type="text" id="user-input" placeholder="Escribe algo...">
+  <button onclick="enviarMensaje()">Enviar</button>
 
   <script>
-    async function sendMessage() {
-      const input = document.getElementById('userInput').value;
-      const resBox = document.getElementById('responseBox');
-      resBox.textContent = 'Pensando...';
+    let historial = [];
 
-      const res = await fetch('/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input })
+    function render(role, text) {
+      const div = document.createElement("div");
+      div.className = role;
+      div.innerText = `${role === "user" ? "Tú" : "Vega"}: ${text}`;
+      document.getElementById("chat-box").appendChild(div);
+      document.getElementById("chat-box").scrollTop = 9999;
+    }
+
+    async function enviarMensaje() {
+      const entrada = document.getElementById("user-input");
+      const mensaje = entrada.value.trim();
+      if (!mensaje) return;
+
+      historial.push({ role: "user", parts: [{ text: mensaje }] });
+      render("user", mensaje);
+      entrada.value = "";
+
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: historial })
       });
 
       const data = await res.json();
-      resBox.textContent = data.reply || ('Error: ' + data.error);
+      if (data.response) {
+        historial.push({ role: "model", parts: [{ text: data.response }] });
+        render("model", data.response);
+      } else {
+        render("model", "Error: " + data.error);
+      }
     }
   </script>
 </body>
 </html>
-
