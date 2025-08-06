@@ -23,3 +23,7 @@ def chat():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+# 👇 ESTA PARTE ES CLAVE
+    port = int(os.environ.get("PORT", 5000))  # Usa el puerto de Render
+    app.run(host='0.0.0.0', port=port)
