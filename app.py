@@ -9,9 +9,12 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 
+from flask import send_file  # ya deberías tener Flask importado
+
 @app.route('/')
 def home():
-    return "<h1>Mini ChatGPT en Flask</h1><p>Usa el endpoint /chat para enviar mensajes.</p>"
+    return send_file('interface.html')
+
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -37,3 +40,4 @@ def chat():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+
