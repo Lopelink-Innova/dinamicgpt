@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return send_file('interface.html')
+    return send_file('interfaz.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
