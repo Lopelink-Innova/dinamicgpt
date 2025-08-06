@@ -1,13 +1,11 @@
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
+from ia_config import IA_INSTRUCCIONES
 
 app = Flask(__name__)
+genai.configure(api_key="TU_API_KEY_AQUI")  # Reemplaza con tu clave
 
-# Configura tu API Key de Google Gemini
-genai.configure(api_key="AIzaSyDkBE0ciGqherga2M76C1cRVMG_p_1ITOc")  # <-- Reemplaza por tu API Key
-
-# Crea instancia del modelo
-model = genai.GenerativeModel("gemini-pro")
+modelo = genai.GenerativeModel("gemini-pro")
 
 @app.route('/')
 def index():
@@ -15,10 +13,11 @@ def index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    user_input = request.json['message']
+    data = request.json
+    mensajes = IA_INSTRUCCIONES + data["messages"]
     try:
-        response = model.generate_content(user_input)
-        return jsonify({'response': response.text})
+        respuesta = modelo.generate_content(mensajes)
+        return jsonify({'response': respuesta.text})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
