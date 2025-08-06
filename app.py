@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import openai
 import os
 from dotenv import load_dotenv
@@ -9,12 +9,9 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 
-from flask import send_file  # ya deberías tener Flask importado
-
 @app.route('/')
 def home():
     return send_file('interface.html')
-
 
 @app.route('/chat', methods=['POST'])
 def chat():
