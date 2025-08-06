@@ -3,77 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dinamic GPT</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
-    textarea { width: 100%; height: 100px; margin-top: 1rem; }
-    button { padding: 10px 20px; margin-top: 1rem; margin-right: 1rem; }
-    .response, .image { margin-top: 2rem; background: #f4f4f4; padding: 1rem; border-radius: 5px; }
-    img { max-width: 100%; margin-top: 1rem; border-radius: 5px; }
-  </style>
+  <title>Mini ChatGPT Gemini</title>
 </head>
 <body>
-  <h1 style="display: flex; align-items: center; justify-content: space-between;">
-  <span>Mini ChatGPT</span>
-  <img src="https://i0.wp.com/lopelink.com/wp-content/uploads/2024/09/AIRTELECOM-1.png?fit=500%2C500&ssl=1" alt="LopeLink Innova" style="height: 60px;">
-</h1>
-  <p>Escribe algo para el asistente o una descripción para una imagen:</p>
-  <textarea id="userInput" placeholder="Hazme trabajar humano que valgo para todo!"></textarea><br>
+  <h1>Mini ChatGPT con Gemini</h1>
+  <textarea id="userInput" placeholder="Escribe tu mensaje..."></textarea><br>
   <button onclick="sendMessage()">Enviar</button>
-  <button onclick="generateImage()">Generar imagen</button>
-
-  <div class="response" id="responseBox"></div>
-  <div class="image" id="imageBox"></div>
+  <div id="responseBox" style="margin-top: 1rem;"></div>
 
   <script>
     async function sendMessage() {
       const input = document.getElementById('userInput').value;
-      const responseBox = document.getElementById('responseBox');
-      const imageBox = document.getElementById('imageBox');
-      responseBox.textContent = "Trabajando por ti, humano, para no ser pobre...";
-      imageBox.innerHTML = "";
+      const resBox = document.getElementById('responseBox');
+      resBox.textContent = 'Pensando...';
 
-      try {
-        const res = await fetch('/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: input })
-        });
+      const res = await fetch('/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input })
+      });
 
-        const data = await res.json();
-        if (data.reply) {
-          responseBox.textContent = data.reply;
-        } else {
-          responseBox.textContent = 'Error: ' + (data.error || 'Sin respuesta');
-        }
-      } catch (err) {
-        responseBox.textContent = 'Error de red: ' + err.message;
-      }
-    }
-
-    async function generateImage() {
-      const input = document.getElementById('userInput').value;
-      const responseBox = document.getElementById('responseBox');
-      const imageBox = document.getElementById('imageBox');
-      responseBox.textContent = "";
-      imageBox.innerHTML = "Generando imagen...";
-
-      try {
-        const res = await fetch('/generate-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: input })
-        });
-
-        const data = await res.json();
-        if (data.image_url) {
-          imageBox.innerHTML = `<img src="${data.image_url}" alt="Imagen generada">`;
-        } else {
-          imageBox.textContent = 'Error: ' + (data.error || 'No se pudo generar la imagen');
-        }
-      } catch (err) {
-        imageBox.textContent = 'Error de red: ' + err.message;
-      }
+      const data = await res.json();
+      resBox.textContent = data.reply || ('Error: ' + data.error);
     }
   </script>
 </body>
