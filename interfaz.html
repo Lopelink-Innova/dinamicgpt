@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini ChatGPT</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
+    textarea { width: 100%; height: 100px; margin-top: 1rem; }
+    button { padding: 10px 20px; margin-top: 1rem; }
+    .response { margin-top: 2rem; background: #f4f4f4; padding: 1rem; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Mini ChatGPT</h1>
+  <p>Escribe un mensaje para el asistente:</p>
+  <textarea id="userInput" placeholder="Hola, ¿cómo estás?"></textarea><br>
+  <button onclick="sendMessage()">Enviar</button>
+
+  <div class="response" id="responseBox"></div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById('userInput').value;
+      const responseBox = document.getElementById('responseBox');
+      responseBox.textContent = "Cargando respuesta...";
+
+      try {
+        const res = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: input })
+        });
+
+        const data = await res.json();
+        if (data.reply) {
+          responseBox.textContent = data.reply;
+        } else {
+          responseBox.textContent = 'Error: ' + (data.error || 'Sin respuesta');
+        }
+      } catch (err) {
+        responseBox.textContent = 'Error de red: ' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
